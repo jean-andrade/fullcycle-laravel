@@ -12,7 +12,11 @@ services:
       - db
       - redis
   nginx:
-    build: .docker/nginx
+    build:
+      context: .docker/nginx
+      args:
+        - HOST_APP=app
+        - PORT_APP=9000
     container_name: nginx
     restart: always
     tty: true
