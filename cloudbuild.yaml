@@ -1,4 +1,4 @@
 steps:
   - id: "Rodando Docker Compose"
     name: "gcr.io/$PROJECT_ID/docker-compose"
-    args: ["-f", "docker-conpose.cloudbuild.yaml", ["up"]]
+    args: ["-f", "docker-conpose.cloudbuild.yaml", "up"]
