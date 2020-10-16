@@ -11,9 +11,13 @@ steps:
     name: "gcr.io/cloud-builders/docker"
     args: ["exec", "-t", "app", "composer", "install"]
 
-  - id: "Copiando .env"
+  - id: "Gerando .env"
     name: "gcr.io/cloud-builders/docker"
-    args: ["exec", "-t", "app", "cp", ".env.example", ".env"]
+    args: ["exec", "-t", "app", "dockerize", "-template", ".env.example:.env"]
+    env:
+      - DB_HOST=${_DB_HOST}
+      - DB_USERNAME=${_DB_USERNAME}
+      - DB_PASSWORD=${_DB_PASSWORD}
 
   - id: "Rodando key:generate"
     name: "gcr.io/cloud-builders/docker"
