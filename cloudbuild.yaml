@@ -4,20 +4,40 @@ steps:
     args: ["-f", "docker-compose.cloudbuild.yaml", "up", "-d"]
 
   - id: "Aguardando Banco de dados"
-    name: "gcr.io/cloud-builders/dockerizer"
-    args: ["-wait", "tcp://${_DB_HOST}:3306", "-timeout", "20s"]
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "exec",
+        "-t",
+        "app",
+        "dockerize",
+        "-wait",
+        "tcp://${_DB_HOST}:3306",
+        "-timeout",
+        "20s",
+      ]
 
   - id: "Rodando Composer"
     name: "gcr.io/cloud-builders/docker"
     args: ["exec", "-t", "app", "composer", "install"]
 
   - id: "Gerando .env"
-    name: "gcr.io/cloud-builders/dockerizer"
-    args: ["-template", ".env.example:.env"]
-    env:
-      - "DB_HOST=${_DB_HOST}"
-      - "DB_USERNAME=${_DB_USERNAME}"
-      - "DB_PASSWORD=${_DB_PASSWORD}"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "exec",
+        "-t",
+        "-e",
+        "DB_HOST=${_DB_HOST}",
+        "-e",
+        "DB_USERNAME=${_DB_USERNAME}",
+        "-e",
+        "DB_PASSWORD=${_DB_PASSWORD}",
+        "app",
+        "dockerize",
+        "-template",
+        ".env.example:.env",
+      ]
 
   - id: "Exibe conteudo .env"
     name: "gcr.io/cloud-builders/docker"
