@@ -2,32 +2,22 @@ steps:
   - id: "Rodando Docker Compose"
     name: "gcr.io/$PROJECT_ID/docker-compose:1.25.5"
     args: ["-f", "docker-compose.cloudbuild.yaml", "up", "-d"]
-    env:
-      - "DB_HOST=${_DB_HOST}"
-      - "DB_USERNAME=${_DB_USERNAME}"
-      - "DB_PASSWORD=${_DB_PASSWORD}"
 
   - id: "Aguardando Banco de dados"
-    name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "exec",
-        "-t",
-        "app",
-        "dockerize",
-        "-wait",
-        "tcp://${_DB_HOST}:3306",
-        "-timeout",
-        "20s",
-      ]
+    name: "gcr.io/cloud-builders/dockerizer"
+    args: ["-wait", "tcp://${_DB_HOST}:3306", "-timeout", "20s"]
 
   - id: "Rodando Composer"
     name: "gcr.io/cloud-builders/docker"
     args: ["exec", "-t", "app", "composer", "install"]
 
   - id: "Gerando .env"
-    name: "gcr.io/cloud-builders/docker"
-    args: ["exec", "-t", "app", "dockerize", "-template", ".env.example:.env"]
+    name: "gcr.io/cloud-builders/dockerizer"
+    args: ["-template", ".env.example:.env"]
+    env:
+      - "DB_HOST=${_DB_HOST}"
+      - "DB_USERNAME=${_DB_USERNAME}"
+      - "DB_PASSWORD=${_DB_PASSWORD}"
 
   - id: "Exibe conteudo .env"
     name: "gcr.io/cloud-builders/docker"
