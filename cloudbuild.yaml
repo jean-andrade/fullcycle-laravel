@@ -1,5 +1,5 @@
 steps:
-  # Testando PR
+  # Testando PR v.2
   - id: "Executar o docker-compose"
     name: "gcr.io/$PROJECT_ID/docker-compose:1.25.5"
     args: ["-f", "docker-compose.cloudbuild.yaml", "up", "-d"]
