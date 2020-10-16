@@ -3,9 +3,19 @@ steps:
     name: "gcr.io/$PROJECT_ID/docker-compose:1.25.5"
     args: ["-f", "docker-compose.cloudbuild.yaml", "up", "-d"]
 
-  - id: "Rodando Docker ps"
+  - id: "Aguardando Banco de dados"
     name: "gcr.io/cloud-builders/docker"
-    args: ["ps"]
+    args:
+      [
+        "exec",
+        "-t",
+        "app",
+        "dockerize",
+        "-wait",
+        "tcp://${_DB_HOST}:3306",
+        "-timeout",
+        "20s",
+      ]
 
   - id: "Rodando Composer"
     name: "gcr.io/cloud-builders/docker"
